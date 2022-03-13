@@ -2,7 +2,9 @@
 
 int main() {
 	rectangle data;
-	InitRectangle(data, 40);
+	int length = 0;
+	ParameterInit(&length); 
+	InitRectangle(data, length);
 	CreatRectangle(data);
 	Visualization(data);
 	gotoxy(0, RANGE + 10);
