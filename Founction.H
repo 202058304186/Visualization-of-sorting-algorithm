@@ -7,7 +7,7 @@
 #include "Tools.H"
 using namespace std;
 #define MAXSIZE 40 //最多定义域 
-#define RANGE 50 //数值范围 
+#define RANGE 30 //数值范围 
 #define SLEEPTIME 100 //休眠时间
 
 //定义句柄,配置初始化环境参数
@@ -52,7 +52,7 @@ void CreatRectangle(rectangle &data)
 	srand(time(NULL));
 	for (int j = 0; j < data.length; j++)
 	{
-		data.longs[j] = rand() % RANGE + 1;
+		data.longs[j] = abs(rand() % RANGE) + 1;
 	}
 }
 
@@ -79,7 +79,7 @@ void Visualization(rectangle data)
 }
 
 //绘制一列
-void DrawAColumn(int x, int y, DWORD color) {
+void DrawAColumn(int x, int y, DWORD color, int start = RANGE) {
 	
 	for (int i = 0; i < y; i++){
 		gotoxy(x * 2, RANGE - i);
@@ -87,19 +87,49 @@ void DrawAColumn(int x, int y, DWORD color) {
 	}
 	SetConsoleTextAttribute(hOut, color);
 	for (int i = 0; i < y; i++) {
-		gotoxy(x * 2, RANGE - i); 
+		gotoxy(x * 2, start - i); 
 		printf("□");
 	}
 	SetConsoleTextAttribute(hOut, src.wAttributes);
 } 
 
 //删除一列
-void DelAColumn(int x, int y) {
-	for (int i = 0; i < RANGE; i++){
-		gotoxy(x * 2, RANGE - i);
+void DelAColumn(int x, int y, int Start = RANGE) {
+	for (int i = 0; i < Start; i++){
+		gotoxy(x * 2, Start - i);
 		printf("  ");
 	}	
 } 
+
+void Scanning(int x, int y) {
+	DelAColumn(x, y);
+	DrawAColumn(x, y, 12);
+	Sleep(SLEEPTIME);
+	DelAColumn(x, y);
+	DrawAColumn(x, y, 7);
+} 
+
+//交换显示 
+void Swap(rectangle data, int pre, int after) {
+	DelAColumn(after, data.longs[after]);
+	DrawAColumn(after, data.longs[after], 12);
+	Sleep(SLEEPTIME);
+	DelAColumn(pre, data.longs[pre]);
+	DelAColumn(after, data.longs[after]);
+	DrawAColumn(pre, data.longs[after], 12);
+	DrawAColumn(after, data.longs[pre], 12);
+	Sleep(SLEEPTIME);
+	DelAColumn(pre, data.longs[after]);
+	DelAColumn(after, data.longs[pre]);
+	DrawAColumn(pre, data.longs[after], 7);
+	DrawAColumn(after, data.longs[pre], 7);
+} 
+
+//有序列表显示
+void showOrder (int x, int y) {
+	DelAColumn(x, y);
+	DrawAColumn(x, y, 12);
+}
 
 
 int Check(rectangle data)
@@ -126,7 +156,7 @@ int Check(rectangle data)
 			gotoxy((i + 1) * 2, RANGE - x);
 			printf("□");
 		}
-		Sleep(SLEEPTIME * 5);
+		Sleep(SLEEPTIME * 0.1);
 
 		if (data.longs[i] > data.longs[i + 1])
 		{
