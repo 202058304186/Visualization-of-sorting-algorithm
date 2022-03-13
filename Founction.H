@@ -6,9 +6,8 @@
 #include<iostream>
 #include "Tools.H"
 using namespace std;
-#define BOTTOM 50
-#define MAXSIZE 40
-#define RANGE 50
+#define MAXSIZE 40 //最多定义域 
+#define RANGE 50 //数值范围 
 #define SLEEPTIME 100
 
 //定义采用顺序表存储的矩形的结构体
@@ -63,11 +62,6 @@ void Visualization(rectangle data)
 {
 	for (int i = 0; i < data.length; i++)
 	{
-		for (int j = 0; j < RANGE; j++)
-		{
-			gotoxy(i * 2, RANGE - j);
-			printf("  ");
-		}
 		for (int j = 0; j < data.longs[i]; j++)
 		{
 			gotoxy(i * 2, RANGE - j);
@@ -75,6 +69,19 @@ void Visualization(rectangle data)
 		}
 	}
 }
+
+//绘制一列
+void DrawAColumn(int x, int y) {
+	for (int i = 0; i < RANGE; i++)
+		{
+			gotoxy(x * 2, RANGE - i);
+			printf("  ");
+		}
+	for (int i = 0; i < y; i++) {
+		gotoxy(x * 2, RANGE); 
+		printf("□");
+	}
+} 
 
 
 int Check(rectangle data)
