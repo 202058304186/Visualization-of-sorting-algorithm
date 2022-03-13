@@ -4,6 +4,7 @@
 #include<conio.h>
 #include<time.h>
 #include<iostream>
+#include "Tools.H"
 using namespace std;
 #define BOTTOM 50
 #define MAXSIZE 40
@@ -34,9 +35,9 @@ void gotoxy(int x, int y)
 }
 
 //初始化图形：输入一个rectangle结构体和长度，进行初始化 
-void InitRectangle(rectangle& data, int i)
+void InitRectangle(rectangle& data, int length)
 {
-	data.length = i;
+	data.length = length;
 }
 
 //初始化化值域：采用随机数进行初始化 
@@ -47,6 +48,15 @@ void CreatRectangle(rectangle& data)
 		data.longs[j] = rand() % RANGE + 1;
 	}
 }
+
+//参数初始化 
+void ParameterInit(int* length) {
+	InputLimit(length, 0, MAXSIZE);
+	if (*length == -1) {
+		cout << "初始化失败,程序结束。" ;
+		exit(1);
+	}
+} 
 
 //绘制图像 
 void Visualization(rectangle data)
