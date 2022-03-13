@@ -8,7 +8,14 @@
 using namespace std;
 #define MAXSIZE 40 //最多定义域 
 #define RANGE 50 //数值范围 
-#define SLEEPTIME 100
+#define SLEEPTIME 100 //休眠时间
+
+//定义句柄,配置初始化环境参数
+HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+CONSOLE_SCREEN_BUFFER_INFO src;
+void init() {
+	GetConsoleScreenBufferInfo(hOut, &src);
+}
 
 //定义采用顺序表存储的矩形的结构体
 /*
@@ -71,16 +78,18 @@ void Visualization(rectangle data)
 }
 
 //绘制一列
-void DrawAColumn(int x, int y) {
-	for (int i = 0; i < RANGE; i++)
-		{
-			gotoxy(x * 2, RANGE - i);
-			printf("  ");
-		}
+void DrawAColumn(int x, int y, DWORD color) {
+	
+	for (int i = 0; i < RANGE; i++){
+		gotoxy(x * 2, RANGE - i);
+		printf("  ");
+	}
+	SetConsoleTextAttribute(hOut, color);
 	for (int i = 0; i < y; i++) {
 		gotoxy(x * 2, RANGE); 
 		printf("□");
 	}
+	SetConsoleTextAttribute(hOut, src.wAttributes);
 } 
 
 
