@@ -47,8 +47,9 @@ void InitRectangle(rectangle& data, int length)
 }
 
 //初始化化值域：采用随机数进行初始化 
-void CreatRectangle(rectangle& data)
+void CreatRectangle(rectangle &data)
 {
+	srand(time(NULL));
 	for (int j = 0; j < data.length; j++)
 	{
 		data.longs[j] = rand() % RANGE + 1;
@@ -80,16 +81,24 @@ void Visualization(rectangle data)
 //绘制一列
 void DrawAColumn(int x, int y, DWORD color) {
 	
-	for (int i = 0; i < RANGE; i++){
+	for (int i = 0; i < y; i++){
 		gotoxy(x * 2, RANGE - i);
 		printf("  ");
 	}
 	SetConsoleTextAttribute(hOut, color);
 	for (int i = 0; i < y; i++) {
-		gotoxy(x * 2, RANGE); 
+		gotoxy(x * 2, RANGE - i); 
 		printf("□");
 	}
 	SetConsoleTextAttribute(hOut, src.wAttributes);
+} 
+
+//删除一列
+void DelAColumn(int x, int y) {
+	for (int i = 0; i < RANGE; i++){
+		gotoxy(x * 2, RANGE - i);
+		printf("  ");
+	}	
 } 
 
 
