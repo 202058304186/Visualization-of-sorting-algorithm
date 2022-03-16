@@ -66,11 +66,11 @@ void ParameterInit(int* length) {
 } 
 
 //绘制图像 
-void Visualization(rectangle data)
+void Visualization(int* data, int length)
 {
-	for (int i = 0; i < data.length; i++)
+	for (int i = 0; i < length; i++)
 	{
-		for (int j = 0; j < data.longs[i]; j++)
+		for (int j = 0; j < data[i]; j++)
 		{
 			gotoxy(i * 2, RANGE - j);
 			printf("□");
@@ -81,21 +81,17 @@ void Visualization(rectangle data)
 //绘制一列
 void DrawAColumn(int x, int y, DWORD color, int start = RANGE) {
 	
-	for (int i = 0; i < y; i++){
-		gotoxy(x * 2, RANGE - i);
-		printf("  ");
-	}
 	SetConsoleTextAttribute(hOut, color);
 	for (int i = 0; i < y; i++) {
 		gotoxy(x * 2, start - i); 
 		printf("□");
-	}
+	}	
 	SetConsoleTextAttribute(hOut, src.wAttributes);
 } 
 
 //删除一列
 void DelAColumn(int x, int y, int Start = RANGE) {
-	for (int i = 0; i < Start; i++){
+	for (int i = 0; i < y; i++){
 		gotoxy(x * 2, Start - i);
 		printf("  ");
 	}	
