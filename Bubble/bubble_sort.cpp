@@ -9,7 +9,7 @@ int main() {
 	ParameterInit(&length); 
 	InitRectangle(data, length);
 	CreatRectangle(data);
-	Visualization(data);
+	Visualization(data.longs, data.length);
 	for (int i = 0; i < data.length - 1; ++i) {
 		int flag = 0;
 		for (int j = 0; j < data.length - i - 1; ++j) {
