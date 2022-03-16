@@ -25,7 +25,7 @@ int main() {
 		//存值
 		DelAColumn(i, data_[i]);
 		DrawAColumn(i, data_[i], 12, 2 * RANGE + 2);
-		Sleep(SLEEPTIME * 20);
+		Sleep(SLEEPTIME * 8);
 		int j = i;
 
 		//寻找插入位置，比较并挪动
@@ -45,7 +45,7 @@ int main() {
 			DelAColumn(j, data_[0], 2 * RANGE + 2);
 			//画新的红色 
 			DrawAColumn(j - 1, data_[0], 12, 2 * RANGE + 2);
-			Sleep(SLEEPTIME * 10);
+			Sleep(SLEEPTIME * 5);
 			//数据移动 
 			data_[j] = data_[j - 1];
 			j--;
@@ -55,16 +55,12 @@ int main() {
 		data_[j] = data_[0];
 		DelAColumn(j, data_[j], 2 * RANGE + 2);
 		DrawAColumn(j, data_[j], 12);
-		Sleep(SLEEPTIME * 20);
+		Sleep(SLEEPTIME * 5);
 		DelAColumn(j, data_[j]);
 		DrawAColumn(j, data_[j], 185);
-		Sleep(SLEEPTIME * 20);
-		
+		Sleep(SLEEPTIME * 10);
 	}
-	
-	for (int i = 0; i < length + 1; ++i) {
-		cout << data_[i] << "   ";
-	}
+	Check(data_, length + 1); 
 	gotoxy(0, RANGE + 5);
 	free(data_);
 	return 0;
