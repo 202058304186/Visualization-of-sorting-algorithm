@@ -128,33 +128,33 @@ void showOrder (int x, int y) {
 }
 
 
-int Check(rectangle data)
+int Check(int* data, int length)
 {
 	int count = 0;
 	HANDLE hOut = NULL;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hOut, 10);
 
-	for (int i = 0; i < data.length - 1; i++)
+	for (int i = 0; i < length - 1; i++)
 	{
 		for (int z = 0; z < RANGE; z++)
 		{
 			gotoxy(i * 2, RANGE - z);
 			printf("  ");
 		}
-		for (int h = 0; h < data.longs[i]; h++)
+		for (int h = 0; h < data[i]; h++)
 		{
 			gotoxy(i * 2, RANGE - h);
 			printf("¡õ");
 		}
-		for (int x = 0; x < data.longs[i + 1]; x++)
+		for (int x = 0; x < data[i + 1]; x++)
 		{
 			gotoxy((i + 1) * 2, RANGE - x);
 			printf("¡õ");
 		}
 		Sleep(SLEEPTIME * 0.1);
 
-		if (data.longs[i] > data.longs[i + 1])
+		if (data[i] > data[i + 1])
 		{
 			count = 1;
 		}
