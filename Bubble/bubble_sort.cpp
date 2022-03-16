@@ -29,7 +29,7 @@ int main() {
 			break;
 		}
 	}
-	Check(data);
+	Check(data.longs, data.length);
 	gotoxy(0, RANGE + 3);
 	cout << "共扫描：" << times << "行。" << endl;
 	cout << "共交换：" << swap_times << "次。";
