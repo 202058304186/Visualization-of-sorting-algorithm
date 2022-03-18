@@ -17,4 +17,5 @@ void RunningTips(const char* tips) {
 	cout << "Running\t" << tips << endl;
 	Sleep(1000);
 	system("cls");
+	return;
 }
