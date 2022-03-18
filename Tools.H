@@ -10,4 +10,11 @@ void InputLimit(int* input, float left_border, float right_border, float accurac
 		cin >> *input;
 	}
 	*input = count < 3 ? *input : left_border - 1;
+	system("cls");
+}
+
+void RunningTips(const char* tips) {
+	cout << "Running\t" << tips << endl;
+	Sleep(1000);
+	system("cls");
 }
