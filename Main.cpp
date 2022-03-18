@@ -1,4 +1,4 @@
-#include "../Founction.H"
+#include "Founction.H"
 
 int main() {
 	Bubble_sort();
