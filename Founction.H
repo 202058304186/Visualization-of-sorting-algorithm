@@ -14,10 +14,129 @@
 #include<iostream>
 #include "Tools.H"
 using namespace std;
+//Tools区常量
+#define S_POS_SWAP  15
+#define S_POS_TIMES 39
+#define S_POS_X 65
+#define S_POS_Y 71
+
+//Founction取常量
 #define MAXSIZE 40 //最多定义域 
 #define RANGE 30 //数值范围 
 #define SLEEPTIME 100 //休眠时间
+/*
+* 函数申明区域
+*/
+void gotoxy(int x, int y);
 
+/*
+* Tool区域-----------------------------------------------------------------------------------------------------------------
+*/
+void InputLimit(int* input, float left_border, float right_border, float accuracy = 0.001) {
+	cout << "请输入值（最大值为40）：";
+	cin >> *input;
+	int count = 0;
+	while (*input - left_border < accuracy || *input - right_border > accuracy && count++ < 3) {
+		printf("输入非法请重新输入（最大值为%d）：", (int)right_border);
+		cin >> *input;
+	}
+	*input = count < 3 ? *input : left_border - 1;
+	system("cls");
+}
+
+void RunningTips(const char* tips) {
+	cout << "Running\t" << tips << endl;
+	Sleep(1000);
+	system("cls");
+	return;
+}
+
+/*
+* Parameters=====>
+* None
+* Founctions=====>
+* show the initial infomation.
+*/
+void showInfo() {
+	cout << "swapped times: 0000    |";
+	cout << "scanned times: 0000    |";
+	cout << "now scanning : x-00, y-00";
+}
+
+/*
+* Parameters=====>
+* int swaptimes: the times of swap.It should take four spaces.
+* int scantimes: the times of scan.It should take four spaces.
+* int X: the pos of X.It should take two spaces.
+* int Y: the pos of Y.It should take two spaces.
+* Founctions=====>
+* To update the infomation of sorting.
+*/
+void updateInfo(int swaptimes, int scantimes, int X, int Y) {
+	int j = 0;
+	char* str1 = (char*)malloc(sizeof(char) * 5);
+	*(str1 + 4) = '\0';
+	for (int i = 3; i >= 0; --i) {
+		if (swaptimes / (int)(pow(10, i)) == 0) {
+			*(str1 + j++) = '0';
+		}
+		else {
+			*(str1 + j++) = 48 + (swaptimes / (int)(pow(10, i)));
+			swaptimes = swaptimes % (int)(pow(10, i));
+		}
+	}
+	gotoxy(S_POS_SWAP, 0);
+	cout << str1;
+
+	j = 0;
+	for (int i = 3; i >= 0; --i) {
+		if (scantimes / (int)(pow(10, i)) == 0) {
+			*(str1 + j++) = '0';
+		}
+		else {
+			*(str1 + j++) = 48 +  (scantimes / (int)(pow(10, i)));
+			scantimes = scantimes % (int)(pow(10, i));
+		}
+	}
+	gotoxy(S_POS_TIMES, 0);
+	cout << str1;
+	free(str1);
+
+	j = 0;
+	char* str2 = (char*)malloc(sizeof(char) * 3);
+	*(str2 + 2) = '\0';
+	for (int i = 1; i >= 0; --i) {
+		if (X / (int)(pow(10, i)) == 0) {
+			*(str2 + j++) = '0';
+		}
+		else {
+			*(str2 + j++) = 48 + (X / (int)(pow(10, i)));
+			X = X % (int)(pow(10, i));
+		}
+	}
+	gotoxy(S_POS_X, 0);
+	cout << str2;
+
+	j = 0;
+	for (int i = 1; i >= 0; --i) {
+		if (Y / (int)(pow(10, i)) == 0) {
+			*(str2 + j++) = '0';
+		}
+		else {
+			*(str2 + j++) = 48 + (Y / (int)(pow(10, i)));
+			Y = Y % (int)(pow(10, i));
+		}
+	}
+	gotoxy(S_POS_Y, 0);
+	cout << str2;
+	free(str2);
+	gotoxy(0, 0);
+}
+
+
+/*
+* Founction区--------------------------------------------------------------------------------------------------------------
+*/
 //定义句柄,配置初始化环境参数
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 CONSOLE_SCREEN_BUFFER_INFO src;
@@ -43,20 +162,15 @@ Essentials: 运行窗口上第一个像素点是(0,0)
 */
 void gotoxy(int x, int y)
 {
-	COORD pos = { x,y };
+	COORD pos = { x, y};
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);// 获取标准输出设备句柄
 	SetConsoleCursorPosition(hOut, pos);//两个参数分别是指定哪个窗体，具体位置
 }
 
-//初始化图形：输入一个rectangle结构体和长度，进行初始化 
+//初始化图矩形数组：输入一个rectangle结构体和长度，进行初始化 
 void InitRectangle(rectangle& data, int length)
 {
 	data.length = length;
-}
-
-//初始化化值域：采用随机数进行初始化 
-void CreatRectangle(rectangle &data)
-{
 	srand(time(NULL));
 	for (int j = 0; j < data.length; j++)
 	{
@@ -100,7 +214,7 @@ void Visualization(int* data, int length, int Start = RANGE)
 * Founction--->
 * To draw a column of rectangle with the color you want.
 */
-void DrawAColumn(int x, int y, DWORD color, int start = RANGE) {
+void DrawAColumn(int x, int y, WORD color, int start = RANGE) {
 	
 	SetConsoleTextAttribute(hOut, color);
 	for (int i = 0; i < y; i++) {
@@ -159,21 +273,10 @@ int Check(int* data, int length, int start = RANGE)
 
 	for (int i = 0; i < length - 1; i++)
 	{
-		for (int z = 0; z < RANGE; z++)
-		{
-			gotoxy(i * 2, RANGE - z);
-			printf("  ");
-		}
-		for (int h = 0; h < data[i]; h++)
-		{
-			gotoxy(i * 2, RANGE - h);
-			printf("□");
-		}
-		for (int x = 0; x < data[i + 1]; x++)
-		{
-			gotoxy((i + 1) * 2, RANGE - x);
-			printf("□");
-		}
+		DelAColumn(i, data[i], start);
+		DrawAColumn(i, data[i], 10, start);
+		DelAColumn(i + 1, data[i + 1], start);
+		DrawAColumn(i + 1, data[i + 1], 10, start);
 		Sleep(SLEEPTIME * 0.1);
 
 		if (data[i] > data[i + 1])
@@ -200,7 +303,6 @@ int Bubble_sort() {
 	int swap_times = 0;
 	ParameterInit(&length);
 	InitRectangle(data, length);
-	CreatRectangle(data);
 	Visualization(data.longs, data.length);
 	for (int i = 0; i < data.length - 1; ++i) {
 		int flag = 0;
@@ -237,10 +339,9 @@ int DIS() {
 	rectangle data;
 	ParameterInit(&length);
 	InitRectangle(data, length);
-	CreatRectangle(data);
 
 	int* data_ = (int*)malloc(sizeof(int) * (length + 3));
-	*data_ = 0;
+	data_[0] = 0;
 	for (int i = 0; i < length - 1; ++i) {
 		data_[i + 1] = data.longs[i];
 	}
@@ -294,6 +395,108 @@ int DIS() {
 	Check(data_, length + 1);
 	gotoxy(0, RANGE + 5);
 	free(data_);
+	system("cls");
+	return 0;
+}
+
+//希尔排序：第一个突破O(n^2)的算法，是简单插入排序的升级版
+/*
+*	选择一个增量序列 t1，t2，……，tk，其中 ti > tj, tk = 1；
+*
+*	按增量序列个数 k，对序列进行 k 趟排序；
+*
+*	每趟排序，根据对应的增量 ti，将待排序列分割成若干长度为 m 的子序列，分别对各子表进行直接插入排序。
+*
+*	仅增量因子为 1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
+*/
+int Shell_sort() {
+	RunningTips("Shell Sort");
+	init();
+	rectangle data;
+	int length = 0;
+	//扫描次数
+	int times = 0;
+	//交换次数
+	int swap_times = 0;
+	//参数初始化
+	ParameterInit(&length);
+	//生成矩形数组
+	InitRectangle(data, length);
+	showInfo();
+	//静态打印初始图形
+	Visualization(data.longs, data.length, RANGE + 1);
+	//排序过程
+	int gap;//增量
+	int temp;//哨兵
+	int i, j;
+	WORD color = 2;
+	//外循环得到分组
+	for (gap = data.length >> 1; gap > 0; gap >>= 1) {
+		//分组
+		for (i = gap; i < data.length; ++i) {
+			
+			//存值
+			temp = data.longs[i];
+			
+			
+			//绘制开始位置，决定主色调
+			WORD color_may = (i % 5 + 10);
+			color = color_may == color ? (i + 1) % 5 + 10 : color_may;
+			//显示temp
+			DelAColumn(i, temp, RANGE + 1);
+			DrawAColumn(i, temp, color, RANGE + 1);
+			//向下temp
+			DelAColumn(i, temp, RANGE + 1);
+			DrawAColumn(i, temp, color, 2 * (RANGE + 1));
+		
+			Visualization(data.longs, data.length, RANGE + 1);
+			times++;
+			updateInfo(swap_times, times, i, data.longs[i]);
+			//进行比较,并移动位置
+			for (j = i - gap; j >= 0 && data.longs[j] > temp; j -= gap) {
+				//统计次数
+				swap_times++;
+				
+				
+				//绘制比较行
+				DelAColumn(j, data.longs[j], RANGE + 1);
+				DrawAColumn(j, data.longs[j], color, RANGE + 1);
+				DelAColumn(j + gap, data.longs[j + gap], RANGE + 1);
+				DrawAColumn(j + gap, data.longs[j + gap], color, RANGE + 1);
+				Sleep(SLEEPTIME * 5);
+
+				//清除移动行 与 被移动行
+				DelAColumn(j, data.longs[j], RANGE + 1);
+				DelAColumn(j + gap, data.longs[j + gap], RANGE + 1);
+				//清除之前的temp
+				DelAColumn(j + gap, data.longs[j + gap], RANGE * 2 + 2);
+				//绘制新的temp
+				DrawAColumn(j, data.longs[j], color, RANGE * 2 + 2);
+
+				//移动值
+				updateInfo(swap_times, times, i, data.longs[i]);
+				data.longs[j + gap] = data.longs[j];
+
+				//绘制移动后的行
+				DrawAColumn(j + gap, data.longs[j + gap], color, RANGE + 1);
+				Sleep(SLEEPTIME * 5);
+			}
+			//插入
+			//清除temp
+			DelAColumn(j + gap, data.longs[j + gap], 2 * RANGE + 2);
+			DelAColumn(j + gap, data.longs[j + gap], RANGE + 1);
+			data.longs[j + gap] = temp;
+			DrawAColumn(j + gap, data.longs[j + gap], color, RANGE + 1);
+			Sleep(SLEEPTIME * 5);
+		}
+	}
+	updateInfo(swap_times, times, i, data.longs[i]);
+	//检查是否有序
+	Check(data.longs, data.length, RANGE + 1);
+	gotoxy(0, RANGE + 3);
+	cout << "共扫描：" << times << "行。" << endl;
+	cout << "共交换：" << swap_times << "次。";
+	system("pause");
 	system("cls");
 	return 0;
 }
