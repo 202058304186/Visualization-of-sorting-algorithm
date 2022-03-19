@@ -12,7 +12,6 @@
 #include<conio.h>
 #include<time.h>
 #include<iostream>
-#include "Tools.H"
 using namespace std;
 //Tools区常量
 #define S_POS_SWAP  15
@@ -63,6 +62,21 @@ void showInfo() {
 	cout << "now scanning : x-00, y-00";
 }
 
+char* intToCharArray(int bits, int val) {
+	char* res = (char*)malloc(sizeof(char) * (bits + 1));
+	*(res + bits) = '\0';
+	for (int i = bits - 1, j = 0; i >= 0; --i) {
+		if (val / (int)(pow(10, i)) == 0) {
+			*(res + j++) = '0';
+		}
+		else {
+			*(res + j++) = 48 + (val / (int)(pow(10, i)));
+			val = val % (int)(pow(10, i));
+		}
+	}
+	return res;
+}
+
 /*
 * Parameters=====>
 * int swaptimes: the times of swap.It should take four spaces.
@@ -74,68 +88,32 @@ void showInfo() {
 */
 void updateInfo(int swaptimes, int scantimes, int X, int Y) {
 	int j = 0;
-	char* str1 = (char*)malloc(sizeof(char) * 5);
-	*(str1 + 4) = '\0';
-	for (int i = 3; i >= 0; --i) {
-		if (swaptimes / (int)(pow(10, i)) == 0) {
-			*(str1 + j++) = '0';
-		}
-		else {
-			*(str1 + j++) = 48 + (swaptimes / (int)(pow(10, i)));
-			swaptimes = swaptimes % (int)(pow(10, i));
-		}
-	}
+	char* str1 = intToCharArray(4, swaptimes);
 	gotoxy(S_POS_SWAP, 0);
-	cout << str1;
-
-	j = 0;
-	for (int i = 3; i >= 0; --i) {
-		if (scantimes / (int)(pow(10, i)) == 0) {
-			*(str1 + j++) = '0';
-		}
-		else {
-			*(str1 + j++) = 48 +  (scantimes / (int)(pow(10, i)));
-			scantimes = scantimes % (int)(pow(10, i));
-		}
-	}
-	gotoxy(S_POS_TIMES, 0);
 	cout << str1;
 	free(str1);
 
-	j = 0;
-	char* str2 = (char*)malloc(sizeof(char) * 3);
-	*(str2 + 2) = '\0';
-	for (int i = 1; i >= 0; --i) {
-		if (X / (int)(pow(10, i)) == 0) {
-			*(str2 + j++) = '0';
-		}
-		else {
-			*(str2 + j++) = 48 + (X / (int)(pow(10, i)));
-			X = X % (int)(pow(10, i));
-		}
-	}
-	gotoxy(S_POS_X, 0);
-	cout << str2;
-
-	j = 0;
-	for (int i = 1; i >= 0; --i) {
-		if (Y / (int)(pow(10, i)) == 0) {
-			*(str2 + j++) = '0';
-		}
-		else {
-			*(str2 + j++) = 48 + (Y / (int)(pow(10, i)));
-			Y = Y % (int)(pow(10, i));
-		}
-	}
-	gotoxy(S_POS_Y, 0);
+	char* str2 = intToCharArray(4, scantimes);
+	gotoxy(S_POS_TIMES, 0);
 	cout << str2;
 	free(str2);
+
+	char* str3 = intToCharArray(2, X);
+	gotoxy(S_POS_X, 0);
+	cout << str3;
+	free(str3);
+
+	char* str4 = intToCharArray(2, Y);
+	gotoxy(S_POS_Y, 0);
+	cout << str4;
+	free(str4);
+
 	gotoxy(0, 0);
 }
 
 
 /*
-* Founction区--------------------------------------------------------------------------------------------------------------
+* Founction区--------------------------------------------------------------------------------------------------------------------------
 */
 //定义句柄,配置初始化环境参数
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
