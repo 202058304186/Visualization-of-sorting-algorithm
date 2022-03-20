@@ -62,6 +62,12 @@ void showInfo() {
 	cout << "now scanning : x-00, y-00";
 }
 
+/*
+* this founction will convert int data into char type array.
+* Parameters===========>
+* int bits: this parameter is used for specifying the number of the length of converstion array.
+* int val: this parameter is the int data that will be converted the parrtern, for instance, 42 ----> 0042
+*/
 char* intToCharArray(int bits, int val) {
 	char* res = (char*)malloc(sizeof(char) * (bits + 1));
 	*(res + bits) = '\0';
