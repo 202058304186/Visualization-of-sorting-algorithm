@@ -27,6 +27,7 @@ using namespace std;
 * 函数申明区域
 */
 void gotoxy(int x, int y);
+void _QuickSort(int* data, int left, int right, int Start, int Info[2]);
 
 /*
 * Tool区域-----------------------------------------------------------------------------------------------------------------
@@ -67,6 +68,7 @@ void showInfo() {
 * Parameters===========>
 * int bits: this parameter is used for specifying the number of the length of converstion array.
 * int val: this parameter is the int data that will be converted the parrtern, for instance, 42 ----> 0042
+* 
 */
 char* intToCharArray(int bits, int val) {
 	char* res = (char*)malloc(sizeof(char) * (bits + 1));
@@ -225,26 +227,80 @@ void Scanning(int x, int y, int start = RANGE) {
 	DrawAColumn(x, y, 7, start);
 } 
 
-//交换显示 
-void Swap(rectangle data, int pre, int after, int start = RANGE) {
-	DelAColumn(after, data.longs[after], start);
-	DrawAColumn(after, data.longs[after], 12, start);
+//交换显示,显示比较并且交换 
+void Swap(rectangle data, int pre, int after, int Start = RANGE) {
+	DelAColumn(after, data.longs[after], Start);
+	DrawAColumn(after, data.longs[after], 12, Start);
 	Sleep(SLEEPTIME);
-	DelAColumn(pre, data.longs[pre], start);
-	DelAColumn(after, data.longs[after], start);
-	DrawAColumn(pre, data.longs[after], 12, start);
-	DrawAColumn(after, data.longs[pre], 12, start);
+
+	DelAColumn(pre, data.longs[pre], Start);
+	DelAColumn(after, data.longs[after], Start);
+	DrawAColumn(pre, data.longs[after], 12, Start);
+	DrawAColumn(after, data.longs[pre], 12, Start);
 	Sleep(SLEEPTIME);
-	DelAColumn(pre, data.longs[after], start);
-	DelAColumn(after, data.longs[pre], start);
-	DrawAColumn(pre, data.longs[after], 7, start);
-	DrawAColumn(after, data.longs[pre], 7, start);
+
+	DelAColumn(pre, data.longs[after], Start);
+	DelAColumn(after, data.longs[pre], Start);
+	DrawAColumn(pre, data.longs[after], 7, Start);
+	DrawAColumn(after, data.longs[pre], 7, Start);
 } 
+void Swap(int* data, int pre, int after, int Start = RANGE, WORD Emphases = 12, WORD Recovery = 7, WORD Change = 12, int sTime = 1) {
+	//突出显示after的值
+	DelAColumn(after, data[after], Start);
+	DrawAColumn(after, data[after], Emphases, Start);
+	Sleep(SLEEPTIME * sTime);
+	
+	//显示交换后的值
+	DelAColumn(pre, data[pre], Start);
+	DelAColumn(after, data[after], Start);
+	DrawAColumn(pre, data[after], Change, Start);
+	DrawAColumn(after, data[pre], Change, Start);
+	Sleep(SLEEPTIME * sTime);
+
+	//重绘结束后的值
+	DelAColumn(pre, data[after], Start);
+	DelAColumn(after, data[pre], Start);
+	DrawAColumn(pre, data[after], Recovery, Start);
+	DrawAColumn(after, data[pre], Recovery, Start);
+}
+
+//标记一个窗口内的所有矩形
+void TargetSegment(rectangle data, int left, int right, int Start = RANGE) {
+	for (int x = left; x <= right; x++) {
+		DelAColumn(x, *(data.longs + x), Start);
+		DrawAColumn(x, *(data.longs + x), 12, Start);
+	}
+	Sleep(SLEEPTIME * 5);
+}
+//重载函数用于支持整形数组
+void TargetSegment(int* data, int left, int right, int Start = RANGE) {
+	for (int x = left; x <= right; x++) {
+		DelAColumn(x, *(data + x), Start);
+		DrawAColumn(x, *(data + x), 12, Start);
+	}
+	Sleep(SLEEPTIME * 5);
+}
+//取消标记一个窗口内的所有矩形
+void CancelSegment(rectangle data, int left, int right, int Start = RANGE) {
+	for (int x = left; x <= right; x++) {
+		DelAColumn(x, *(data.longs + x), Start);
+		DrawAColumn(x, *(data.longs + x), 7, Start);
+	}
+	Sleep(SLEEPTIME);
+}
+//重载函数用于支持整型数组
+void CancelSegment(int* data, int left, int right, int Start = RANGE) {
+	for (int x = left; x <= right; x++) {
+		DelAColumn(x, *(data + x), Start);
+		DrawAColumn(x, *(data + x), 7, Start);
+	}
+	Sleep(SLEEPTIME);
+}
 
 //有序列表显示
-void showOrder (int x, int y, int start = RANGE) {
+void showOrder (int x, int y, WORD color = 12, int start = RANGE) {
 	DelAColumn(x, y, start);
-	DrawAColumn(x, y, 12, start);
+	DrawAColumn(x, y, color, start);
 }
 
 //是否有序检查
@@ -394,6 +450,7 @@ int DIS() {
 *	仅增量因子为 1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
 */
 int Shell_sort() {
+	//初始化过程
 	RunningTips("Shell Sort");
 	init();
 	rectangle data;
@@ -441,7 +498,6 @@ int Shell_sort() {
 				//统计次数
 				swap_times++;
 				
-				
 				//绘制比较行
 				DelAColumn(j, data.longs[j], RANGE + 1);
 				DrawAColumn(j, data.longs[j], color, RANGE + 1);
@@ -474,13 +530,105 @@ int Shell_sort() {
 			Sleep(SLEEPTIME * 5);
 		}
 	}
+	//更新数据
 	updateInfo(swap_times, times, i, data.longs[i]);
 	//检查是否有序
 	Check(data.longs, data.length, RANGE + 1);
+	//显示执行次数
 	gotoxy(0, RANGE + 3);
 	cout << "共扫描：" << times << "行。" << endl;
 	cout << "共交换：" << swap_times << "次。";
 	system("pause");
 	system("cls");
 	return 0;
+}
+
+
+
+
+//快速排序： 目前
+int QuickSort() {
+	//初始化过程
+	RunningTips("Quick Sort");
+	init();
+	rectangle data;
+	int length = 0;
+	//扫描次数
+	int times = 0;
+	//交换次数
+	int swap_times = 0;
+	//开始位置 
+	int Start = RANGE + 1;
+	//参数初始化
+	ParameterInit(&length);
+	//生成矩形数组
+	InitRectangle(data, length);
+	showInfo();
+	//静态打印初始图形
+	Visualization(data.longs, data.length, Start);
+	int Info[2] = { times, swap_times };
+	_QuickSort(data.longs, 0, data.length - 1, Start, Info);
+	return 0;
+}
+
+//快速排序的递归
+void _QuickSort(int* data, int left, int right, int Start, int Info[2]) {
+	int i, j;
+	int temp;
+	int RVP;
+	if (left < right)
+	{
+		//标记现在排序的所有方块
+		TargetSegment(data, left, right, Start);
+
+
+
+		i = left; 
+		j = right;
+		RVP = i;
+		while (i < j) {
+			//基准值标粉13
+			DelAColumn(2 * RANGE + 3, *(data + RVP), Start);
+			DrawAColumn(2 * RANGE + 3, *(data + RVP), 13, Start);
+			while (i < right && *(data + RVP) >= *(data + i)) {
+				showOrder(i, data[i], 10, Start);
+				Sleep(SLEEPTIME * 3);
+				i++;
+				Info[0]++;
+			}
+			updateInfo(Info[1], Info[0], i, data[i]);
+			while (*(data + RVP) < *(data + j)) {
+				showOrder(j, data[j], 14, Start);
+				Sleep(SLEEPTIME * 3);
+				j--;
+				Info[0]++;
+			}
+			updateInfo(Info[1], Info[0], j, data[j]);
+			gotoxy(0, 0);
+			//交换
+			if (i < j) {
+				Info[1]++;
+				updateInfo(Info[1], Info[0], i, data[i]);
+				Swap(data, i, j, Start, 252U, 12, 252, 5);
+				temp = *(data + i);
+				*(data + i) = *(data + j);
+				*(data + j) = temp;
+			}
+		}
+		//移动基准值
+		Swap(data, RVP, j, Start, 253U, 12, 253, 5);
+		temp = *(data + RVP);
+		*(data + RVP) = *(data + j);
+		*(data + j) = temp;
+		//取消标记并恢复成原色
+		CancelSegment(data, left, right, Start);
+
+		for (int x = left; x < right; x++) {
+			DelAColumn(x, *(data + x), Start);
+			DrawAColumn(x, *(data + x), 15, Start);
+		}
+		DelAColumn(2 * RANGE + 3, *(data + j), Start);
+		_QuickSort(data, left, j - 1, Start, Info);
+		_QuickSort(data, j + 1, right, Start, Info);
+	}
 }
